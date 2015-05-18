@@ -1,0 +1,19 @@
+import java.util.*;
+import java.net.*;
+import java.io.*;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.nio.file.*;
+
+
+class sampleClient {
+	public static void main(String [] args) {
+		int port = args[1];
+		InerAddress ip = InetAddress.getByName(args[0]);
+		byte[] buf = new byte[256];
+		String message = "You are connected";
+		buf = message.getBytes();
+		packet = new DatagramPacket(buf, buf.length, ip, 8800);
+		server.send(packet);
+	}
+}
