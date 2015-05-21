@@ -30,9 +30,9 @@ public class Worker extends Thread{
 			int sent = 0;
 			InetAddress address = InetAddress.getByName("localhost");
 			byte [] buf = new byte[256];
-			System.out.println(hash);
-			System.out.println(calcHash("aaa99"));
-			System.out.println(end);
+			System.out.println(start);
+			//System.out.println(calcHash("aaa99"));
+			//System.out.println(end);
 			int count = 0;
 			String current = start;
 			for(int i = 0; i < 62; i++) {
@@ -165,7 +165,7 @@ public class Worker extends Thread{
 				count++;
 				//System.out.println(current);
 			}
-			System.out.println(current);
+			//System.out.println(current);
 			if(sent == 0) {
 				buf = ("DONE_NOT_FOUND " + port + " " + start + " " + current).getBytes();
 				packet = new DatagramPacket(buf, buf.length, address, packet.getPort());
@@ -173,7 +173,7 @@ public class Worker extends Thread{
 				sent++;
 			}
 		} catch(Exception e) {
-
+			e.printStackTrace();
 		}
 		
 	}

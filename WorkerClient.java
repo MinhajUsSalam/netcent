@@ -29,7 +29,7 @@ public class WorkerClient extends Thread {
 				Worker w1 = new Worker("s","e","w",sock,packet,1);
 				buf = new byte[256];
 				packet = new DatagramPacket(buf, buf.length, address, packet.getPort());
-				System.out.println("waiting");
+				//System.out.println("waiting");
 				sock.receive(packet);
 				String input = new String(packet.getData(), 0, packet.getLength());
 				if(input.substring(0,3).equals("JOB")) {
@@ -41,12 +41,13 @@ public class WorkerClient extends Thread {
 					running = 1;
 					Done = 0;
 					Found = 0;
-					buf = ("ACK_JOB " + input.substring(4,48) + " " + Integer.toString(port) ).getBytes();
+					buf = ("ACK_JOB " + start + " " + end + " " + hash  + " " + Integer.toString(port) ).getBytes();
 					packet = new DatagramPacket(buf, buf.length, address, packet.getPort());
 					sock.send(packet);
-					System.out.println("acking");
+					//System.out.println("acking");" "
 				} else if (input.substring(0,4).equals("PING")) {
-					System.out.println("pinged");
+					//System.out.println("pinged");
+					//System.out.println(packet.getPort());
 					if(Done == 1 && Found == 1) {
 						buf = ("DONE_FOUND " + last + " " + hash + " " + Integer.toString(port)).getBytes();
 						packet = new DatagramPacket(buf, buf.length, address, packet.getPort());
@@ -61,7 +62,7 @@ public class WorkerClient extends Thread {
 						sock.send(packet);
 					}
 				} else if(input.substring(0,10).equals("CANCEL_JOB")) {
-					System.out.println("canelling");
+					//System.out.println("canelling");
 					if(running == 1) {
 						Done = 1;
 						Found = 0;
@@ -71,7 +72,7 @@ public class WorkerClient extends Thread {
 				}
 			}
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 	}
 

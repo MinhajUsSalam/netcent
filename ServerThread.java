@@ -59,7 +59,7 @@ public class ServerThread extends Thread{
 
 		public void sendJob(String workerPort, int id, String hash) {
 			try {	
-					System.out.println("here i am O youmighty one");
+					//System.out.println("here i am O youmighty one");
 					byte [] buf = new byte[256];
 					String next = "";
 					String begin = "";
@@ -76,14 +76,17 @@ public class ServerThread extends Thread{
 							}
 						}
 					} else {
-						for(int i = 0; i < 50; i++) {
-							if(Server.workers[i][0] != null) {
-								if(Server.workers[i][0].equals(Integer.toString(Server.failed))) {
-									begin = Server.workers[i][4];
-									next = Server.workers[i][4].charAt(0) + Server.workers[i][4].charAt(1) + "999"; 
-									hash = Server.workers[i][3];
+						for(int i = 0; i < 1000; i++) {
+							if(Server.incompleteJobs[i][0] != null) {
+									begin = Server.incompleteJobs[i][1];
+									next = Server.incompleteJobs[i][2].substring(0,2) + "999"; 
+									hash = Server.incompleteJobs[i][3];
+									Server.failed = 0;
+									Server.incompleteJobs[i][0] = null;
+									Server.incompleteJobs[i][1] = null;
+									Server.incompleteJobs[i][2] = null;
+									Server.incompleteJobs[i][3] = null;
 									break;
-								}
 							}
 						}
 					}
@@ -104,18 +107,18 @@ public class ServerThread extends Thread{
 					}
 					
 			} catch (Exception e) {
-
+				e.printStackTrace();
 			}
 		}
 
 
 		public void run() {
 			try {
-				System.out.println("workerPort");
+			//	System.out.println("workerPort");
 				String input = new String(packet.getData(), 0, packet.getLength());
-				System.out.println(input);
+			//	System.out.println(input);
 				if(input.substring(0,4).equals("HASH")) {
-					System.out.println("hashing");
+					//System.out.println("hashing");
 					String hash = input.substring(5,37);
 					String clientId = input.substring(38,42);
 					int count = 0;
@@ -150,7 +153,7 @@ public class ServerThread extends Thread{
 
 
 				} else if (input.substring(0,7).equals("ACK_JOB")) {
-					System.out.println("acked");
+					//System.out.println("acked");
 					String rangeBegin = input.substring(8,13);
 					String rangeEnd = input.substring(14,19);
 					String target = input.substring(20,52);
@@ -171,7 +174,7 @@ public class ServerThread extends Thread{
 										if(Server.jobs[a][0] != null) {
 											if(Server.jobs[a][0].equals(target)) {
 												
-												System.out.println(Server.jobs[a][2]);
+												//System.out.println(Server.jobs[a][2]);
 												break;
 											}
 										}
@@ -204,33 +207,44 @@ public class ServerThread extends Thread{
 						if(Server.jobs[i][0] != null) {
 							if(Server.jobs[i][0].equals(hash)) {
 								client = Server.jobs[i][1];
+								for(int j = 0; j < 100; j++) {
+									if(Server.clients[j] != 0) {
+										if(Server.clients[j] == Integer.parseInt(client)) {
+											client = Integer.toString(Server.clients[j]);
+											break;
+										}
+									}
+								}
 								Server.jobs[i][0] = null;
 								Server.jobs[i][1] = null;
 								Server.jobs[i][2] = null;
 								Server.jobs[i][3] = null;
+								break;
 							}
 						}
 					}
 					byte [] buf1 = new byte[256];
 					String mge ="Found " + password;
-					buf1 = mge.getBytes();
-					InetAddress address1 = InetAddress.getByName("localhost");
-					DatagramPacket packet1 = new DatagramPacket(buf1, buf1.length, address1, Integer.parseInt(client));
-					server.send(packet1);
-					for(int i = 0; i < 50; i++) {
-						if(Server.workers[i][0] != null) {
-							if(Server.workers[i][3].equals(hash)) {
-								byte [] buf = new byte[256];
-								String message ="CANCEL_JOB";
-								buf = message.getBytes();
-								InetAddress address = InetAddress.getByName("localhost");
-								DatagramPacket packet = new DatagramPacket(buf, buf.length, address, Integer.parseInt(Server.workers[i][0]));
-								server.send(packet);
-								Server.workers[i][1] = null;
-								Server.workers[i][2] = null;
-								Server.workers[i][3] = null;
-								Server.workers[i][4] = null;
-								findJob(Server.workers[i][0]);
+					if(client != null) {
+						buf1 = mge.getBytes();
+						InetAddress address1 = InetAddress.getByName("localhost");
+						DatagramPacket packet1 = new DatagramPacket(buf1, buf1.length, address1, Integer.parseInt(client));
+						server.send(packet1);
+						for(int i = 0; i < 50; i++) {
+							if(Server.workers[i][0] != null) {
+								if(Server.workers[i][3].equals(hash)) {
+									byte [] buf = new byte[256];
+									String message ="CANCEL_JOB";
+									buf = message.getBytes();
+									InetAddress address = InetAddress.getByName("localhost");
+									DatagramPacket packet = new DatagramPacket(buf, buf.length, address, Integer.parseInt(Server.workers[i][0]));
+									server.send(packet);
+									Server.workers[i][1] = null;
+									Server.workers[i][2] = null;
+									Server.workers[i][3] = null;
+									Server.workers[i][4] = null;
+									findJob(Server.workers[i][0]);
+								}
 							}
 						}
 					}
@@ -246,7 +260,7 @@ public class ServerThread extends Thread{
 
 						
 				} else if (input.substring(0,14).equals("DONE_NOT_FOUND")) {
-					System.out.println("Nf");
+					//System.out.println("Nf");
 					String workerPort = input.substring(15,19);
 					int found = 0;
 					String hash = "";
@@ -270,7 +284,7 @@ public class ServerThread extends Thread{
 					for(int i = 0; i < 100; i++) {
 						if(Server.jobs[i][0] != null) {
 							if(Server.jobs[i][0].equals(hash)) {
-								Server.jobs[i][3] = Server.jobs[i][3] = Integer.toString(Integer.parseInt(Server.jobs[i][3]) - 1); 
+								Server.jobs[i][3] =  Integer.toString(Integer.parseInt(Server.jobs[i][3]) - 1); 
 							}
 						}
 					}	
@@ -289,10 +303,11 @@ public class ServerThread extends Thread{
 				} else if (input.substring(0,15).equals("REQUEST_TO_JOIN")) {
 					int workerPort = Integer.parseInt(input.substring(16,20));
 					for(int i = 0; i < 50; i ++) {
-						System.out.println(i);
+					//	System.out.println(i);
 						if(Server.workers[i][0] == null) {
-							System.out.println(workerPort);
+							//System.out.println(workerPort);
 							Server.workers[i][0] = Integer.toString(workerPort);
+							Server.workers[i][5] = "1";
 							break;
 						}
 					}
@@ -303,7 +318,7 @@ public class ServerThread extends Thread{
 						}
 					}
 					Server.noOfWorkers++;
-					System.out.println("joined");
+					//System.out.println("joined");
 					findJob(Integer.toString(workerPort));
 				}
 			} catch (Exception e) {
