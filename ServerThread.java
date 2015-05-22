@@ -354,8 +354,8 @@ public class ServerThread extends Thread{
 					for(int i = 0; i < 100; i++) {
 						if(Server.jobs[i][0] != null) {
 							System.out.println(Server.jobs[i][0]);
-								System.out.println(Server.jobs[i][3]);
-								System.out.println(Server.noOfWorkers/Server.noOfJobs);
+								//System.out.println(Server.jobs[i][3]);
+								//System.out.println(Server.noOfWorkers/Server.noOfJobs);
 							if(Integer.parseInt(Server.jobs[i][3]) < Server.noOfWorkers/Server.noOfJobs) {
 							//	System.out.println("parsing");
 								

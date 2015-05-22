@@ -25,6 +25,7 @@ class sampleClient {
 			packet = new DatagramPacket(buf, buf.length, address, packet.getPort());
 			sock.receive(packet);
 			String input = new String(packet.getData(), 0, packet.getLength());
+			rp.interrupt();
 			System.out.println(input);
 		} catch (Exception e) {
 
