@@ -117,7 +117,9 @@ public class ServerThread extends Thread{
 			//	System.out.println("workerPort");
 				String input = new String(packet.getData(), 0, packet.getLength());
 			//	System.out.println(input);
-				if(input.substring(0,4).equals("HASH")) {
+				if(input.substring(0,4).equals("PING")) {
+
+				} else if(input.substring(0,4).equals("HASH")) {
 					//System.out.println("hashing");
 					String hash = input.substring(5,37);
 					String clientId = input.substring(38,42);
@@ -322,7 +324,7 @@ public class ServerThread extends Thread{
 					findJob(Integer.toString(workerPort));
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				
 			}
 		
 		}
@@ -351,10 +353,12 @@ public class ServerThread extends Thread{
 			//		String workerPort = Server.freeWorkers[j];
 					for(int i = 0; i < 100; i++) {
 						if(Server.jobs[i][0] != null) {
+							System.out.println(Server.jobs[i][0]);
+								System.out.println(Server.jobs[i][3]);
+								System.out.println(Server.noOfWorkers/Server.noOfJobs);
 							if(Integer.parseInt(Server.jobs[i][3]) < Server.noOfWorkers/Server.noOfJobs) {
 							//	System.out.println("parsing");
-							//	System.out.println(Integer.parseInt(Server.jobs[i][3]));
-							//	System.out.println(Server.noOfWorkers/Server.noOfJobs);
+								
 								sendJob(workerPort, Integer.parseInt(Server.jobs[i][2]),Server.jobs[i][0]);
 								break;
 							}

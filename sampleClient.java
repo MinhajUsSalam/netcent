@@ -19,6 +19,8 @@ class sampleClient {
 			InetAddress address = InetAddress.getByName("localhost");
 			DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
 			sock.send(packet);
+			requestPing rp = new requestPing(sock,port);
+			rp.start();
 			buf = new byte[256];
 			packet = new DatagramPacket(buf, buf.length, address, packet.getPort());
 			sock.receive(packet);
